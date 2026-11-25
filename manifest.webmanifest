@@ -1,0 +1,26 @@
+{
+  "name": "One Alerta — Agenda Inteligente",
+  "short_name": "One Alerta",
+  "description": "Agenda de eventos e lembretes para OneState RP.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090711",
+  "theme_color": "#090711",
+  "icons": [
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
