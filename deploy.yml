@@ -1,0 +1,77 @@
+name: Validar e publicar One Alerta Web
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: one-alerta-pages
+  cancel-in-progress: true
+
+jobs:
+  validar:
+    name: Verificar arquivos e código
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código do repositório
+        uses: actions/checkout@v6
+
+      - name: Conferir arquivos necessários
+        run: |
+          test -s index.html
+          test -s app.js
+          test -s styles.css
+          test -s sw.js
+          test -s manifest.webmanifest
+          test -s assets/icon-192.png
+          test -s assets/icon-512.png
+          test -s assets/apple-touch-icon.png
+
+      - name: Verificar sintaxe JavaScript
+        run: |
+          node --check app.js
+          node --check sw.js
+
+      - name: Validar manifesto JSON
+        run: node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest', 'utf8')); console.log('Manifesto válido')"
+
+      - name: Verificar diferenças e espaços inválidos
+        run: git diff --check
+
+  publicar:
+    name: Publicar no GitHub Pages
+    needs: validar
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Baixar código do repositório
+        uses: actions/checkout@v6
+
+      - name: Preparar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Montar site para publicação
+        run: |
+          mkdir -p _site/assets
+          cp index.html app.js styles.css sw.js manifest.webmanifest _site/
+          cp assets/icon-192.png assets/icon-512.png assets/apple-touch-icon.png _site/assets/
+          touch _site/.nojekyll
+
+      - name: Enviar arquivos do site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Publicar site
+        id: deployment
+        uses: actions/deploy-pages@v4
