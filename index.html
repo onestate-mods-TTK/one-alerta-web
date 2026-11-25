@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090711">
+  <meta name="description" content="One Alerta — agenda de eventos e lembretes para OneState RP.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="One Alerta">
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <title>One Alerta</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-wrap"><img src="./assets/icon-192.png" alt="" class="brand-icon"><div><div class="brand">ONE ALERTA</div><div class="subbrand">AGENDA INTELIGENTE</div></div></div>
+      <div class="account-pill" id="accountStatus">ONLINE</div>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="eyebrow">ONESTATE RP • CENTRAL DE EVENTOS</div>
+        <h1 id="greeting">Tudo em um só lugar.</h1>
+        <p>Organize seus eventos e não perca os horários importantes.</p>
+        <div class="hero-stats"><div><strong id="eventCount">52</strong><span>eventos diários</span></div><div><strong id="reminderCount">0</strong><span>lembretes ativos</span></div></div>
+      </section>
+
+      <nav class="tabs" aria-label="Navegação principal">
+        <button class="tab active" data-view="home">Início</button>
+        <button class="tab" data-view="events">Eventos</button>
+        <button class="tab" data-view="reminders">Lembretes</button>
+        <button class="tab" data-view="settings">Conta</button>
+      </nav>
+
+      <section class="view active" id="view-home">
+        <div class="section-heading"><div><span class="eyebrow">SUA AGENDA</span><h2>Próximos eventos</h2></div><button class="text-btn" data-go="events">Ver todos</button></div>
+        <div id="nextEvents" class="stack"></div>
+        <div class="section-heading"><div><span class="eyebrow">SEUS AGENDAMENTOS</span><h2>Lembretes pessoais</h2></div><button class="text-btn" data-go="reminders">Abrir</button></div>
+        <div id="homeReminders" class="stack"></div>
+      </section>
+
+      <section class="view" id="view-events">
+        <div class="section-heading"><div><span class="eyebrow">52 HORÁRIOS DIÁRIOS</span><h2>Agenda de eventos</h2></div></div>
+        <div class="toolbar"><button id="selectAll" class="secondary-btn">Selecionar todos</button><button id="clearAll" class="secondary-btn">Limpar seleção</button></div>
+        <div class="notice slim">Os horários seguem o fuso escolhido em Configurações. As seleções ficam salvas neste dispositivo.</div>
+        <div id="eventGroups" class="stack"></div>
+      </section>
+
+      <section class="view" id="view-reminders">
+        <div class="section-heading"><div><span class="eyebrow">ORGANIZAÇÃO PESSOAL</span><h2>Meus lembretes</h2></div></div>
+        <form id="reminderForm" class="form-card">
+          <h3 id="formTitle">Novo lembrete</h3>
+          <label>Nome do lembrete<input id="reminderName" maxlength="80" required placeholder="Ex.: Entrar no evento"></label>
+          <label>Data e horário<input id="reminderDate" type="datetime-local" required></label>
+          <label>Mensagem adicional <span class="optional">(opcional)</span><textarea id="reminderMessage" rows="2" maxlength="250" placeholder="Escreva uma observação"></textarea></label>
+          <div class="form-actions"><button type="submit" class="primary-btn" id="saveReminder">Salvar lembrete</button><button type="button" class="secondary-btn hidden" id="cancelEdit">Cancelar</button></div>
+          <p class="tiny-note">Nesta primeira versão web, os lembretes são salvos e sincronizados com sua conta. Alertas automáticos com o site fechado no iPhone ainda dependem da configuração do serviço de notificações push.</p>
+        </form>
+        <div class="section-heading"><div><span class="eyebrow">AGENDADOS</span><h2>Próximos lembretes</h2></div></div>
+        <div id="reminderList" class="stack"></div>
+        <div class="section-heading"><div><span class="eyebrow">CONCLUÍDOS / VENCIDOS</span><h2>Histórico</h2></div></div>
+        <div id="historyList" class="stack"></div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="section-heading"><div><span class="eyebrow">SUA CONTA</span><h2>Configurações</h2></div></div>
+        <div class="form-card account-card">
+          <div class="account-head"><div class="google-mark">G</div><div><h3>Conta Google</h3><p id="accountEmail">Conecte para sincronizar lembretes.</p></div></div>
+          <div id="googleButton"></div>
+          <button id="signOut" class="secondary-btn hidden">Sair da conta</button>
+          <div id="syncStatus" class="tiny-note">Seus dados locais permanecem neste aparelho até você conectar uma conta.</div>
+          <button id="syncNow" class="secondary-btn hidden">Sincronizar agora</button>
+        </div>
+        <div class="form-card">
+          <h3>Fuso horário</h3>
+          <label>Horários da agenda<select id="timezone"><option value="device">Usar fuso do aparelho</option><option value="America/Sao_Paulo">Brasília (America/Sao_Paulo)</option></select></label>
+          <p class="tiny-note">A agenda de eventos mostra os horários definidos pelo OneState RP. Escolha Brasília para manter a referência de Brasília mesmo se viajar.</p>
+        </div>
+        <div class="form-card">
+          <h3>Notificações e alertas</h3>
+          <p class="tiny-note">Ative as notificações para receber um aviso do sistema no horário do lembrete enquanto o One Alerta estiver aberto e em execução. O sinal sonoro também precisa ser desbloqueado pelo botão abaixo. Avisos com o site totalmente fechado ainda dependem da próxima etapa de Web Push.</p>
+          <div class="form-actions notification-actions">
+            <button id="enableNotifications" class="primary-btn" type="button">Ativar notificações e som</button>
+            <button id="testNotification" class="secondary-btn" type="button">Testar alerta</button>
+          </div>
+          <p id="notificationStatus" class="tiny-note" aria-live="polite">Notificações ainda não ativadas neste navegador.</p>
+          <p class="tiny-note">No iPhone, é necessário usar iOS 16.4 ou superior e adicionar o site à Tela de Início pelo Safari antes de conceder permissão.</p>
+        </div>
+        <div class="form-card">
+          <h3>Instalar no iPhone</h3>
+          <ol class="install-steps"><li>Abra este site no Safari.</li><li>Toque em Compartilhar.</li><li>Escolha “Adicionar à Tela de Início”.</li><li>Confirme em “Adicionar”.</li></ol>
+          <button id="installAndroid" class="secondary-btn hidden">Instalar aplicativo</button>
+        </div>
+        <div class="about">ONESTATE_MODS-TTK · Agenda Inteligente · Web beta 0.2</div>
+      </section>
+    </main>
+    <footer class="footer"><span>ONE ALERTA</span><span>AGENDA INTELIGENTE</span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="./app.js"></script>
+</body>
+</html>
